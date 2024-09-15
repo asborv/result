@@ -11,5 +11,6 @@ public sealed class Err<T, E> : Result<T, E> where E : Exception
     public override Err<U, E> Map<U>(Func<T, U> _) => new(Error);
     public override T Unwrap() => throw Error;
 
-    public static implicit operator E(Err<T, E> f) => f.Error;
+    public static implicit operator Err<T, E>(E e) => new(e);
+    public static implicit operator E(Err<T, E> e) => e.Error;
 }

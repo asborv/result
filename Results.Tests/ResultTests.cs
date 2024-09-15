@@ -64,4 +64,25 @@ public class ResultTests
         var mapped = result.Map(x => x * 2);
         Assert.Throws<Exception>(() => mapped.Unwrap());
     }
+
+    [Fact]
+    public void TryInvokeSuccess()
+    {
+        var result = new Func<int>(() => 42).TryInvoke<int, Exception>();
+        Assert.True(result.IsOk);
+        Assert.Equal(42, result.Unwrap());
+    }
+
+    [Fact]
+    public void TryInvokeFailure()
+    {
+        var exception = new Exception();
+        var result = new Func<int>(() => throw exception).TryInvoke<int, Exception>();
+
+        Assert.True(result.IsErr);
+        Assert.Equal(exception, ((Err<int, Exception>)result).Error);
+    }
+
+    public static Result<int, Exception> Divide(int dividend, int divisor) =>
+        divisor == 0 ? new DivideByZeroException() : dividend / divisor;
 }

@@ -9,4 +9,7 @@ public abstract class Result<T, E> where E : Exception
     public abstract bool IsErr { get; }
     public abstract Result<U, E> Map<U>(Func<T, U> f);
     public abstract T Unwrap();
+
+    public static implicit operator Result<T, E>(T v) => Ok(v);
+    public static implicit operator Result<T, E>(E e) => Err(e);
 }
