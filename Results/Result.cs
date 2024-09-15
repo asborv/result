@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-
-namespace Results;
+﻿namespace Results;
 
 public abstract class Result<T, E> where E : Exception
 {
@@ -24,6 +22,8 @@ public abstract class Result<T, E> where E : Exception
         public override Success Map(Func<T, T> f) => new(f(Value));
         public override Success MapFailure(Func<E, E> _) => this;
         public override T Unwrap() => Value;
+
+        public static implicit operator T(Success s) => s.Value;
     }
 
     public sealed class Failure : Result<T, E>
@@ -37,5 +37,7 @@ public abstract class Result<T, E> where E : Exception
         public override Failure Map(Func<T, T> _) => this;
         public override Failure MapFailure(Func<E, E> f) => new(f(Error));
         public override T Unwrap() => throw Error;
+
+        public static implicit operator E(Failure f) => f.Error;
     }
 }
